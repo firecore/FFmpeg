@@ -511,6 +511,9 @@ retry:
         ret = ff_h263_decode_picture_header(s);
     }
 
+    if (s->divx_packed)
+        avctx->fcDivxPacked = 1;
+
     if (ret < 0 || ret == FRAME_SKIPPED) {
         if (   s->width  != avctx->coded_width
             || s->height != avctx->coded_height) {

@@ -3319,6 +3319,9 @@ typedef struct AVCodecContext {
     int fcProbeDecoding;
     int h264OutIdx;
 
+    // this flag is set in decoder when it sees that we have packed B-frames (h263dec.c)
+    int fcDivxPacked;
+
 } AVCodecContext;
 
 #if FF_API_CODEC_GET_SET
@@ -4044,6 +4047,9 @@ typedef struct AVCodecParameters {
      * Audio only. Number of samples to skip after a discontinuity.
      */
     int seek_preroll;
+
+    // this flag is set in decoder when it sees that we have packed B-frames (h263dec.c)
+    int fcDivxPacked;
 } AVCodecParameters;
 
 /**
