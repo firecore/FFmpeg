@@ -3753,6 +3753,13 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
             sc->min_corrected_pts = start_time;
             if (!mov->advanced_editlist)
                 current_dts = -sc->time_offset;
+            if (sc->ctts_count>0 && sc->stts_count>0 &&
+                sc->ctts_data[0].duration / FFMAX(sc->stts_data[0].duration, 1) > 16) {
+                /* more than 16 frames delay, dts are likely wrong
+                 this happens with files created by iMovie */
+                //sc->wrong_dts = 1;
+                st->codec->has_b_frames = 1;
+            }
         }
 
         if (!multiple_edits && !mov->advanced_editlist &&
