@@ -281,6 +281,8 @@ const AVCodecTag ff_codec_movvideo_tags[] = {
 
     { AV_CODEC_ID_DXV, MKTAG('D', 'X', 'D', '3') },
     { AV_CODEC_ID_DXV, MKTAG('D', 'X', 'D', 'I') },
+    
+    { AV_CODEC_ID_FAIRPLAY, MKTAG('d', 'r', 'm', 'i') }, /* Apple Fair Play encrypted stream */
 
     { AV_CODEC_ID_MAGICYUV, MKTAG('M', '0', 'R', '0') },
     { AV_CODEC_ID_MAGICYUV, MKTAG('M', '0', 'R', 'A') },
