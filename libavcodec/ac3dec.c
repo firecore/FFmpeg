@@ -1795,6 +1795,11 @@ dependent_frame:
 
     *got_frame_ptr = 1;
 
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+    av_frame_unref(frame);
+    *got_frame_ptr = 0;
+#endif
+
     if (!s->superframe_size)
         return FFMIN(full_buf_size, s->frame_size);
 

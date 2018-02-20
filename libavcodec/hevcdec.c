@@ -3218,6 +3218,10 @@ static int hevc_decode_frame(AVCodecContext *avctx, void *data, int *got_output,
         s->is_decoded = 0;
     }
 
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+    return avpkt->size;
+#endif
+
     if (s->output_frame->buf[0]) {
         av_frame_move_ref(data, s->output_frame);
         *got_output = 1;

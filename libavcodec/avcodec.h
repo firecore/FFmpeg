@@ -3318,6 +3318,7 @@ typedef struct AVCodecContext {
     // we can perform probe decoding to receive some info
     int fcProbeDecoding;
     int h264OutIdx;
+    int fcH264DiscardedPicture;
 
     // this flag is set in decoder when it sees that we have packed B-frames (h263dec.c)
     int fcDivxPacked;

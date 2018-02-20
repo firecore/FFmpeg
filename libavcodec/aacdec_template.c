@@ -3359,6 +3359,10 @@ static int aac_decode_frame(AVCodecContext *avctx, void *data,
     if ((err = init_get_bits8(&gb, buf, buf_size)) < 0)
         return err;
 
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+    data = av_frame_alloc();
+#endif
+
     switch (ac->oc[1].m4ac.object_type) {
     case AOT_ER_AAC_LC:
     case AOT_ER_AAC_LTP:
@@ -3369,6 +3373,12 @@ static int aac_decode_frame(AVCodecContext *avctx, void *data,
     default:
         err = aac_decode_frame_int(avctx, data, got_frame_ptr, &gb, avpkt);
     }
+
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+    av_frame_free((AVFrame**)&data);
+    *got_frame_ptr = 0;
+#endif
+
     if (err < 0)
         return err;
 

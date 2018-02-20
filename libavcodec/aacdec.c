@@ -521,6 +521,10 @@ static int latm_decode_frame(AVCodecContext *avctx, void *out,
         return AVERROR_INVALIDDATA;
     }
 
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+    out = av_frame_alloc();
+#endif
+
     switch (latmctx->aac_ctx.oc[1].m4ac.object_type) {
     case AOT_ER_AAC_LC:
     case AOT_ER_AAC_LTP:
@@ -531,6 +535,12 @@ static int latm_decode_frame(AVCodecContext *avctx, void *out,
     default:
         err = aac_decode_frame_int(avctx, out, got_frame_ptr, &gb, avpkt);
     }
+
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+    av_frame_free((AVFrame**)&out);
+    *got_frame_ptr = 0;
+#endif
+
     if (err < 0)
         return err;
 

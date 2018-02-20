@@ -7283,6 +7283,8 @@ print_config CONFIG_ "$config_files" $CONFIG_LIST       \
                                      $CONFIG_EXTRA      \
                                      $ALL_COMPONENTS    \
 
+echo "#define STRIP_PROPRIETARY_NATIVE_IOS_DECODERS $ENVVAR_STRIP_IOS_DECODERS" >> $TMPH
+
 echo "#endif /* FFMPEG_CONFIG_H */" >> $TMPH
 echo "endif # FFMPEG_CONFIG_MAK" >> ffbuild/config.mak
 

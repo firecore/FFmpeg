@@ -836,6 +836,15 @@ static int get_consumed_bytes(int pos, int buf_size)
 static int output_frame(H264Context *h, AVFrame *dst, H264Picture *srcp)
 {
     AVFrame *src = srcp->f;
+
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+    h->avctx->width   = src->width;
+    h->avctx->height  = src->height;
+    h->avctx->pix_fmt = src->format;
+
+    return 0;
+#endif
+
     int ret;
 
     ret = av_frame_ref(dst, src);
@@ -910,7 +919,12 @@ static int finalize_frame(H264Context *h, AVFrame *dst, H264Picture *out, int *g
         if (ret < 0)
             return ret;
 
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+        *got_frame = 0;
+        h->avctx->fcH264DiscardedPicture = 1;
+#else
         *got_frame = 1;
+#endif
 
         if (CONFIG_MPEGVIDEO) {
             ff_print_debug_info2(h->avctx, dst, NULL,

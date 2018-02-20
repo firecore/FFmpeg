@@ -208,6 +208,14 @@ int ff_hevc_output_frame(HEVCContext *s, AVFrame *out, int flush)
         if (nb_output) {
             HEVCFrame *frame = &s->DPB[min_idx];
 
+#if STRIP_PROPRIETARY_NATIVE_IOS_DECODERS
+            if (frame->flags & HEVC_FRAME_FLAG_BUMPING)
+                ff_hevc_unref_frame(s, frame, HEVC_FRAME_FLAG_OUTPUT | HEVC_FRAME_FLAG_BUMPING);
+            else
+                ff_hevc_unref_frame(s, frame, HEVC_FRAME_FLAG_OUTPUT);
+            return 0;
+#endif
+
             ret = av_frame_ref(out, frame->frame);
             if (frame->flags & HEVC_FRAME_FLAG_BUMPING)
                 ff_hevc_unref_frame(s, frame, HEVC_FRAME_FLAG_OUTPUT | HEVC_FRAME_FLAG_BUMPING);
