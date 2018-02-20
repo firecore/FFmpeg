@@ -6992,6 +6992,9 @@ static void mov_read_chapters(AVFormatContext *s)
         cur_pos = avio_tell(sc->pb);
 
         if (st->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+            if (st->disposition & AV_DISPOSITION_ATTACHED_PIC) {
+                continue;
+            }
             st->disposition |= AV_DISPOSITION_ATTACHED_PIC | AV_DISPOSITION_TIMED_THUMBNAILS;
             if (st->nb_index_entries) {
                 // Retrieve the first frame, if possible
