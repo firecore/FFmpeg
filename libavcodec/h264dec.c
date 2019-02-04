@@ -764,6 +764,10 @@ static int decode_nal_units(H264Context *h, const uint8_t *buf, int buf_size)
     ret = 0;
 end:
 
+    // Remove decoding errors when in probing mode
+    if (h->avctx->fcProbeDecoding)
+        atomic_store(&h->slice_ctx->er.error_count, 0);
+
 #if CONFIG_ERROR_RESILIENCE
     /*
      * FIXME: Error handling code does not seem to support interlaced
@@ -878,7 +882,8 @@ static int finalize_frame(H264Context *h, AVFrame *dst, H264Picture *out, int *g
          (h->avctx->flags2 & AV_CODEC_FLAG2_SHOW_ALL) ||
          out->recovered)) {
 
-        if (!h->avctx->hwaccel &&
+        if (!h->avctx->fcProbeDecoding &&
+            !h->avctx->hwaccel &&
             (out->field_poc[0] == INT_MAX ||
              out->field_poc[1] == INT_MAX)
            ) {
@@ -939,6 +944,8 @@ static int send_next_delayed_frame(H264Context *h, AVFrame *dst_frame,
             out     = h->delayed_pic[i];
             out_idx = i;
         }
+
+    h->avctx->h264OutIdx = out_idx;
 
     for (i = out_idx; h->delayed_pic[i]; i++)
         h->delayed_pic[i] = h->delayed_pic[i + 1];

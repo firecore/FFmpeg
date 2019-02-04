@@ -207,7 +207,7 @@ static int alloc_picture(H264Context *h, H264Picture *pic)
             pic->hwaccel_picture_private = pic->hwaccel_priv_buf->data;
         }
     }
-    if (CONFIG_GRAY && !h->avctx->hwaccel && h->flags & AV_CODEC_FLAG_GRAY && pic->f->data[2]) {
+    if (CONFIG_GRAY && !h->avctx->fcProbeDecoding && !h->avctx->hwaccel && h->flags & AV_CODEC_FLAG_GRAY && pic->f->data[2]) {
         int h_chroma_shift, v_chroma_shift;
         av_pix_fmt_get_chroma_sub_sample(pic->f->format,
                                          &h_chroma_shift, &v_chroma_shift);
@@ -504,7 +504,7 @@ static int h264_frame_start(H264Context *h)
 
     if ((ret = alloc_picture(h, pic)) < 0)
         return ret;
-    if(!h->frame_recovered && !h->avctx->hwaccel)
+    if(!h->frame_recovered && !h->avctx->fcProbeDecoding && !h->avctx->hwaccel)
         ff_color_frame(pic->f, c);
 
     h->cur_pic_ptr = pic;
@@ -1401,6 +1401,9 @@ static int h264_select_output_frame(H264Context *h)
             out     = h->delayed_pic[i];
             out_idx = i;
         }
+
+    h->avctx->h264OutIdx = out_idx;
+
     if (h->avctx->has_b_frames == 0 &&
         (h->delayed_pic[0]->f->key_frame || h->delayed_pic[0]->mmco_reset))
         h->next_outputed_poc = INT_MIN;
@@ -2795,6 +2798,11 @@ int ff_h264_execute_decode_slices(H264Context *h)
     int i, j;
 
     h->slice_ctx[0].next_slice_idx = INT_MAX;
+
+    if (h->avctx->fcProbeDecoding) {
+        h->nb_slice_ctx_queued = 0;
+        return 0;
+    }
 
     if (h->avctx->hwaccel || context_count < 1)
         return 0;

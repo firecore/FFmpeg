@@ -450,7 +450,8 @@ static int decode_simple_internal(AVCodecContext *avctx, AVFrame *frame)
     emms_c();
     actual_got_frame = got_frame;
 
-    if (avctx->codec->type == AVMEDIA_TYPE_VIDEO) {
+    // Don't drop frames during probe decoding
+    if (avctx->codec->type == AVMEDIA_TYPE_VIDEO && !avctx->fcProbeDecoding) {
         if (frame->flags & AV_FRAME_FLAG_DISCARD)
             got_frame = 0;
         if (got_frame)

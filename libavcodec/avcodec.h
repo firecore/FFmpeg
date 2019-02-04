@@ -3313,6 +3313,11 @@ typedef struct AVCodecContext {
      * used as reference pictures).
      */
     int extra_hw_frames;
+
+    // we can perform probe decoding to receive some info
+    int fcProbeDecoding;
+    int h264OutIdx;
+
 } AVCodecContext;
 
 #if FF_API_CODEC_GET_SET
